@@ -7,11 +7,10 @@
       "dense_layers":                  [[1024,512,0.7,true,"relu"],[512,256,0.7,true,"relu"],[256,4,0,false,null]]
    },
    "optimizer": {
-      "name":                          "adam",
-      "lr":                            0.001,
-      "lrsched":                       "StepLR",
-      "lrsched_step_size":             400,
-      "lrsched_gamma":                 0.75
+      "name":                          "Adam",
+      "args": {
+         "lr":                            0.001
+      }
    },
    "loss": {
       "func":                          "pixelwise_crossentropy_focal",

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse,logging,socket,json,sys
 import numpy as np
-import data_gen,pointnet,loss_acc
+import data_gen,pointnet,loss_acc,optimizer
 logger = logging.getLogger(__name__)
 import torch
 
@@ -77,7 +77,8 @@ def main():
    loss_func = loss_acc.get_loss(config)
    acc_func = loss_acc.get_accuracy(config)
 
-   opt = torch.optim.Adam(model.parameters())
+   opt_class = optimizer.get_optimizer(config)
+   opt = opt_class(model.parameters(),**config['optimizer']['args'])
 
    ds = data_gen.get_dataset(config)
 
