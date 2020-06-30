@@ -1,0 +1,32 @@
+{
+   "model": {
+      "framework":                     "pytorch",
+      "model":                         "pointnet1d_semseg",
+      "input_to_feature":              [[4,64,false,false],[64,64,false,false]],
+      "feature_to_pool":               [[64,64,false,false],[64,128,false,false],[128,1024,false,false]],
+      "dense_layers":                  [[1024,512,0.7,true,"relu"],[512,256,0.7,true,"relu"],[256,4,0,false,null]]
+   },
+   "optimizer": {
+      "name":                          "Adam",
+      "args": {
+         "lr":                            0.001
+      }
+   },
+   "loss": {
+      "func":                          "pixelwise_crossentropy_focal",
+      "acc":                           "mean_class_iou"
+   },
+   "data_handling": {
+      "input_format":                  "pytorch_dataset",
+      "dataset_size":                  10,
+      "num_classes":                   5,
+      "image_shape":                   [4,1500],
+      "shuffle":                       true,
+      "workers":                       1
+   },
+   "training": {
+      "batch_size":                    10,
+      "epochs":                        2,
+      "status":                        1
+   }
+}
