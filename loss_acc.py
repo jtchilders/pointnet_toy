@@ -118,7 +118,7 @@ def pixelwise_crossentropy_focal(pred,targets,endpoints,weights,device='cpu',gam
    # targets.shape = [N_batch,N_points]
    # weights.shape = [N_batch,N_points]
 
-   logger.info('pred = %s  targets = %s weights = %s',pred.shape,targets.shape,weights.shape)
+   #logger.info('pred = %s  targets = %s weights = %s',pred.shape,targets.shape,weights.shape)
 
    nclasses = pred.shape[1]
 

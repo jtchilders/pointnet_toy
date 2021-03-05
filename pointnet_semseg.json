@@ -18,15 +18,15 @@
    },
    "data_handling": {
       "input_format":                  "pytorch_dataset",
-      "dataset_size":                  50,
+      "dataset_size":                  1000,
       "num_classes":                   5,
       "image_shape":                   [4,15000],
       "shuffle":                       true,
       "workers":                       1
    },
    "training": {
-      "batch_size":                    10,
-      "epochs":                        1,
+      "batch_size":                    32,
+      "epochs":                        10,
       "status":                        1
    }
 }

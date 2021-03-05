@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse,logging,socket,json,sys,psutil
+import argparse,logging,socket,json,sys,psutil,time
 import numpy as np
 import data_gen,pointnet,loss_acc,optimizer
 logger = logging.getLogger(__name__)
@@ -99,14 +99,14 @@ def main():
    epochs = config['training']['epochs']
    for epoch in range(epochs):
       logger.info('starting epoch %s of %s',epoch,config['training']['epochs'])
-
+      run_time = 0
       for batch_number,(inputs,weights,targets) in enumerate(ds):
-
+         start_time = time.time()
          inputs = inputs.to(device)
          weights = weights.to(device)
          targets = targets.to(device)
 
-         logger.info('inputs = %s  weights = %s  targets = %s',inputs.shape,weights.shape,targets.shape)
+         #logger.info('inputs = %s  weights = %s  targets = %s',inputs.shape,weights.shape,targets.shape)
 
          opt.zero_grad()
 
@@ -121,14 +121,17 @@ def main():
             acc = acc.mean()
          accuracies.append(acc)
          losses.append(loss)
+         run_time += time.time() - start_time
          if batch_number % config['training']['status'] == 0:
             acc = torch.median(torch.Tensor(accuracies))
             loss = torch.median(torch.Tensor(losses))
-            logger.info('<[%3d of %3d, %5d of %5d]> train loss: %6.4f train acc: %6.4f ',
-                        epoch + 1,epochs,batch_number,len(ds),loss.item(),acc.item())
+            rate = config['training']['status'] * config['training']['batch_size'] / run_time
+            logger.info('<[%3d of %3d, %5d of %5d]> train loss: %6.4f train acc: %6.4f image/sec: %6.4f',
+                        epoch + 1,epochs,batch_number,len(ds),loss.item(),acc.item(),rate)
 
             accuracies = []
             losses = []
+         run_time = 0
 
 
 if __name__ == "__main__":
