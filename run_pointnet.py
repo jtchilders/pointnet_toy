@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
-import argparse,logging,socket,json,sys
+import argparse,logging,socket,json,sys,psutil
 import numpy as np
 import data_gen,pointnet,loss_acc,optimizer
 logger = logging.getLogger(__name__)
 import torch
 
+def print_mem_cpu():
+   start = time.time()
+   while True:
+      mem = psutil.virtual_memory()
+      print(str(time.time()-start) + ' pid = ' + str(os.getpid()) + ' total mem = ' + str(mem.total) + ' free mem = ' + str(mem.free/mem.total*100.) + ' cpu usage = ' + str(psutil.cpu_percent()))
+      time.sleep(1)
 
 def main():
    ''' simple starter program that can be copied for use when starting a new script. '''
@@ -15,6 +21,8 @@ def main():
    parser.add_argument('--horovod',default=False, action='store_true', help="Setup for distributed training")
 
    parser.add_argument('--random_seed',default=0,type=int,help='numpy random seed')
+
+   parser.add_argument('--mem_mon',default=False, action='store_true', help="spawn subprocess to monitor memory")
 
    parser.add_argument('--debug', dest='debug', default=False, action='store_true', help="Set Logger to DEBUG")
    parser.add_argument('--error', dest='error', default=False, action='store_true', help="Set Logger to ERROR")
@@ -81,6 +89,10 @@ def main():
    opt = opt_class(model.parameters(),**config['optimizer']['args'])
 
    ds = data_gen.get_dataset(config)
+
+   if rank == 0 and args.mem_mon:
+      memorymon = mp.Process(target=print_mem_cpu)
+      memorymon.start()
 
    accuracies = []
    losses = []
