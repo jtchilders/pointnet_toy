@@ -14,7 +14,7 @@ def print_mem_cpu():
 
 def main():
    ''' simple starter program that can be copied for use when starting a new script. '''
-   
+
    parser = argparse.ArgumentParser(description='')
    parser.add_argument('-c','--config',help='configuration file in json format',required=True)
 
@@ -28,6 +28,9 @@ def main():
    parser.add_argument('--error', dest='error', default=False, action='store_true', help="Set Logger to ERROR")
    parser.add_argument('--warning', dest='warning', default=False, action='store_true', help="Set Logger to ERROR")
    parser.add_argument('--logfilename',dest='logfilename',default=None,help='if set, logging information will go to file')
+
+   default_device = "cuda:0" if torch.cuda.is_available() else "cpu"
+   parser.add_argument('--device', dest='device', default=default_device, help='If set, use the selected device.')
    args = parser.parse_args()
 
    logging_format = '%(asctime)s %(levelname)s:%(name)s:%(message)s'
@@ -53,7 +56,7 @@ def main():
 
    if rank > 0 and logging_level == logging.INFO:
       logging_level = logging.WARNING
-   
+
    logging.basicConfig(level=logging_level,
                        format=logging_format,
                        datefmt=logging_datefmt,
@@ -62,9 +65,9 @@ def main():
    np.random.seed(args.random_seed)
 
    config = json.load(open(args.config))
-   
+
    # detect device available
-   device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+   device = torch.device(args.device)
 
    config['rank'] = rank
    config['nranks'] = nranks
