@@ -5,6 +5,11 @@ import data_gen,pointnet,loss_acc,optimizer
 logger = logging.getLogger(__name__)
 import torch
 
+try:
+   import torch_ipex
+except:
+   pass
+
 def print_mem_cpu():
    start = time.time()
    while True:
